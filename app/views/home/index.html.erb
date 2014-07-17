@@ -1,0 +1,41 @@
+<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+<script>
+function review(id){
+    $.post('/home/review', {id:id}, function(data){
+              if (data.status){
+                  $('#click_num_' + data.id).html(parseInt($('#click_num_' + data.id).html()) + 1);
+                  alert('review success!');
+              } else {
+                  alert(data.msg);
+              }
+    }, 'json');
+}
+</script>
+<style>
+ body{font-size:13px;color:#999;background: #eee;}
+.h2{color:#000;}
+.list{margin-top:20px;}
+.list a {padding:5px 10px;}
+.list td{padding-left:10px;}
+.share{padding-left:10px;height:50px;height:30px;margin-top:10px;font-size:15px;font-weight: bold;}
+a{font-size:13px;text-decoration: none;}
+a link{color:green;}
+</style>
+
+<h2 class="h2">Link Share</h2> <span class="share"><%= link_to 'share', "/home/new" %></span>
+<table class="list">
+<% i = 1 %>
+<% @articles.each do |art| %>
+<tr>
+    <td><a href="javascript:void(0);" onclick="review(<%= art.id %>);">▲</a><%= i %></td>
+    <td><a href="<%= art.content %>" target="_blank"><%= art.title %></a></td>
+    <td><%= art.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+    <td style="color:#000;">review:<span id="click_num_<%= art.id %>"><%= art.click_num.to_i %></span></td>
+    <td><a href="/home/comments/<%= art.id %>"><%= art.comments_num %> comments</a></td>
+    <td><!--<%= link_to '查看', "home/#{art.id}" %> -->
+    <%= link_to 'edit', edit_home_path(art) %>
+    <%= link_to 'delete', "/home/delete/#{art.id}" %></td>
+</tr>
+<% i = i + 1 %>
+<% end %>
+</table>

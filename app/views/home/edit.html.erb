@@ -1,0 +1,17 @@
+<h2>编辑</h2>
+<form action="/home/update" method="post">
+<input type="hidden" name="id" value="<%= @article.id %>"/>
+<table>
+         <tr>
+           <td>title:</td>
+           <td><input type="text" name="title" value="<%= @article.title %>" /></td>
+         </tr>
+          <tr>
+            <td>href:</td>
+            <td><input type="text" name="content" value="<%= @article.content %>"/></td>
+          </tr>
+          <tr>
+            <td colspan="2"><input type="submit" value="update" /></td>
+          </tr>
+</table>
+</form>

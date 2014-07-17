@@ -1,0 +1,22 @@
+<h2>Comments List</h2>
+<table>
+<% @comments.each do |comment| %>
+    <tr>
+      <td><%= comment.content %></td>
+      <td><%= comment.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+    </tr>
+<% end %>
+</table>
+
+<form action="/home/addcomments" method="post">
+<input type="hidden" name="article_id" value="<%= @article.id %>"  />
+<table>
+        <tr>
+          <td>Content:</td>
+          <td><textarea name="content" rows="10" cols="50"></textarea></td>
+        </tr>
+        <tr>
+          <td colspan="2"><input type="submit" value="Submit Comment" /></td>
+        </tr>
+</table>
+</form>
