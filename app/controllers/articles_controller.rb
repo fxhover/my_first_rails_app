@@ -1,5 +1,6 @@
 #encoding:utf-8
 class ArticlesController < ActionController::Base
+  layout 'application'
   respond_to :html, :xml, :json
 
   before_filter :authenticate, :only => [:edit, :update, :delete]
