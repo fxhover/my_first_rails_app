@@ -1,83 +1,113 @@
-class ArticlesController < ApplicationController
-  # GET /articles
-  # GET /articles.json
-  def index
-    @articles = Article.all
+#encoding:utf-8
+class ArticlesController < ActionController::Base
+  respond_to :html, :xml, :json
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @articles }
+  before_filter :authenticate, :only => [:edit, :update, :delete]
+
+  def index
+    @articles = Article.page(params[:page]).per(2)
+    #render :json => @articles
+    @articles.each_with_index do |art, i|
+      @articles[i][:comments_num] =  Comments.where({:article_id => art.id}).count()
     end
+    respond_with(@articles)
   end
 
-  # GET /articles/1
-  # GET /articles/1.json
   def show
     @article = Article.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @article }
-    end
+    respond_with(@article)
   end
 
-  # GET /articles/new
-  # GET /articles/new.json
-  def new
-    @article = Article.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @article }
-    end
-  end
-
-  # GET /articles/1/edit
   def edit
     @article = Article.find(params[:id])
+    respond_with(@article)
   end
 
-  # POST /articles
-  # POST /articles.json
-  def create
-    @article = Article.new(params[:article])
-
-    respond_to do |format|
-      if @article.save
-        format.html { redirect_to @article, notice: 'Article was successfully created.' }
-        format.json { render json: @article, status: :created, location: @article }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @article.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /articles/1
-  # PUT /articles/1.json
   def update
-    @article = Article.find(params[:id])
-
-    respond_to do |format|
-      if @article.update_attributes(params[:article])
-        format.html { redirect_to @article, notice: 'Article was successfully updated.' }
-        format.json { head :no_content }
+    if request.post?
+      @article = Article.find(params[:id])
+      if @article.update_attributes({:title=>params[:title],:content=>params[:content], :description=>params[:description]})
+        redirect_to :action=> 'index'
       else
-        format.html { render action: "edit" }
-        format.json { render json: @article.errors, status: :unprocessable_entity }
+        render action: "edit"
       end
     end
   end
 
-  # DELETE /articles/1
-  # DELETE /articles/1.json
-  def destroy
+  def delete
     @article = Article.find(params[:id])
-    @article.destroy
+    @article.destroy()
+    redirect_to  :action=> 'index'
+  end
 
-    respond_to do |format|
-      format.html { redirect_to articles_url }
-      format.json { head :no_content }
+  def new
+    if request.post?
+      content = params[:content]
+      if (content.slice(0, 4) != 'http')
+        content = 'http://' + content
+      end
+
+      @article = Article.new({:title=>params[:title], :content=>content, :description=>params[:description]})
+      if @article.save
+        redirect_to :action=> 'index'
+      else
+        render action: "new"
+      end
+
     end
   end
+
+  def review
+    if request.post?
+      @article = Article.find(params[:id])
+      @data = {:status => false, :msg => "资源不存在！"}
+      if !@article.nil?
+        click_num = @article.click_num.to_i + 1
+        if @article.update_attributes({:click_num => click_num})
+          @data[:status] = true
+          @data[:id] = @article.id
+        else
+          @data[:msg] = 'review fail!'
+        end
+      end
+      render :json => @data
+    end
+  end
+
+  def add
+    @data = [1,2,3]
+    render :json => @data
+  end
+
+  def comments
+    @article = Article.find(params[:id])
+    @comments = @article.comments.all()
+    respond_with(@article, @comments)
+  end
+
+  def addcomments
+    if request.post?
+      @article = Article.find(params[:article_id])
+      if @article.nil?
+        render :html => 'Link not found!'
+        redirect_to :action => 'index'
+      else
+        @comment = @article.comments.new({:article_id => @article.id, :content => params[:content]})
+        if @comment.save
+          redirect_to :action => "comments", :id => @article.id
+        else
+          redirect_to :action => "comments", :id => @article.id
+        end
+      end
+    end
+  end
+
+  private
+
+  def authenticate
+    authenticate_or_request_with_http_basic do |user_name, password|
+      user_name = 'admin' && password == 'admin'
+    end
+  end
+
 end

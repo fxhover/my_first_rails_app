@@ -1,5 +1,7 @@
 source 'http://ruby.taobao.org'
 
+ruby '1.9.3'
+
 gem 'rails', '3.2.13'
 
 gem 'thin'
@@ -22,7 +24,9 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
+gem 'jquery-rails', '~> 3.0.4'
+
+gem 'kaminari', '~> 0.16.1'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

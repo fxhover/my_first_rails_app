@@ -1,16 +1,15 @@
 Blog::Application.routes.draw do
-  resources :articles
-  resources :home do
+  resources :articles do
     collection do
-     get "add"
-     post "addcomments"
+       get "add"
+       post "addcomments"
     end
   end
-  match 'home/update' => 'home#update'
-  match 'home/delete/:id' => 'home#delete'
-  match 'home/new' => 'home#new', :via => :post
-  match 'home/review' => 'home#review'
-  match 'home/comments/:id' => 'home#comments'
+  match 'articles/delete/:id' => 'articles#delete'
+  match 'articles/update' => 'articles#update', :via => :post
+  match 'articles/new' => 'articles#new', :via => :post
+  match 'articles/review' => 'articles#review'
+  match 'articles/comments/:id' => 'articles#comments'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -68,5 +67,5 @@ Blog::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
-  root :to => 'home#index'
+  root :to => 'articles#index'
 end

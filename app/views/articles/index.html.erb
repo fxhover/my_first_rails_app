@@ -1,29 +1,45 @@
-<h1>Listing articles</h1>
+<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+<script>
+function review(id){
+    $.post('/articles/review', {id:id}, function(data){
+              if (data.status){
+                  $('#click_num_' + data.id).html(parseInt($('#click_num_' + data.id).html()) + 1);
+                  alert('review success!');
+              } else {
+                  alert(data.msg);
+              }
+    }, 'json');
+}
+</script>
+<style>
+ body{font-size:13px;color:#999;background: #eee;}
+.h2{color:#000;}
+.list{margin-top:20px;}
+.list a {padding:5px 10px;}
+.list td{padding-left:10px;}
+.share{padding-left:10px;height:50px;height:30px;margin-top:10px;font-size:15px;font-weight: bold;}
+a{font-size:13px;text-decoration: none;}
+a link{color:green;}
+</style>
 
-<table>
-  <tr>
-    <th>Title</th>
-    <th>User id</th>
-    <th>Content</th>
-    <th>Click num</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
-<% @articles.each do |article| %>
-  <tr>
-    <td><%= article.title %></td>
-    <td><%= article.user_id %></td>
-    <td><%= article.content %></td>
-    <td><%= article.click_num %></td>
-    <td><%= link_to 'Show', article %></td>
-    <td><%= link_to 'Edit', edit_article_path(article) %></td>
-    <td><%= link_to 'Destroy', article, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
+<h2 class="h2">Link Share</h2> <span class="share"><%= link_to 'share', "/articles/new" %></span>
+<table class="list">
+<% i = 1 %>
+<% @articles.each do |art| %>
+<tr>
+    <td><a href="javascript:void(0);" onclick="review(<%= art.id %>);">▲</a><%= i %></td>
+    <td>
+      <%= link_to art.title, (art.content.present? ? art.content : article_path(art.id)), target: '_blank' %>
+    </td>
+    <td><%= art.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+    <td style="color:#000;">review:<span id="click_num_<%= art.id %>"><%= art.click_num.to_i %></span></td>
+    <td><a href="/articles/comments/<%= art.id %>"><%= art.comments_count %> comments</a></td>
+    <td><!--<%= link_to '查看', "articles/#{art.id}" %> -->
+    <%= link_to 'edit', edit_article_path(art) %>
+    <%= link_to 'delete', "/articles/delete/#{art.id}" %></td>
+</tr>
+<% i = i + 1 %>
 <% end %>
 </table>
 
-<br />
-
-<%= link_to 'New Article', new_article_path %>
+<p><%= paginate @articles %></p>

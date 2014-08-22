@@ -1,25 +1,23 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <b>Title:</b>
-  <%= @article.title %>
-</p>
-
-<p>
-  <b>User i:</b>
-  <%= @article.user_id %>
-</p>
-
-<p>
-  <b>Content:</b>
-  <%= @article.content %>
-</p>
-
-<p>
-  <b>Click num:</b>
-  <%= @article.click_num %>
-</p>
-
-
-<%= link_to 'Edit', edit_article_path(@article) %> |
-<%= link_to 'Back', articles_path %>
+<h2>details</h2>
+<table>
+    <tr>
+        <td>user_id</td>
+        <td><%= @article.user_id %></td>
+    </tr>
+    <tr>
+      <td>description</td>
+      <td><%= @article.description %></td>
+    </tr>
+    <tr>
+        <td>title</td>
+        <td><%= @article.title %></td>
+    </tr>
+    <tr>
+        <td>link</td>
+        <td><%= @article.content %></td>
+    </tr>
+    <tr>
+        <td>create_time</td>
+        <td><%= @article.created_at %></td>
+    </tr>
+</table>
