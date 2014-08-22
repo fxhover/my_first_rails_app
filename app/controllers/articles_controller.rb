@@ -6,7 +6,7 @@ class ArticlesController < ActionController::Base
   before_filter :authenticate, :only => [:edit, :update, :delete]
 
   def index
-    @articles = Article.page(params[:page]).per(2)
+    @articles = Article.page(params[:page]).per(20)
     #render :json => @articles
     @articles.each_with_index do |art, i|
       @articles[i][:comments_num] =  Comments.where({:article_id => art.id}).count()
