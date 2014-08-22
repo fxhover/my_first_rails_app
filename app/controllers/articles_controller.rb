@@ -44,7 +44,7 @@ class ArticlesController < ActionController::Base
   def new
     if request.post?
       content = params[:content]
-      if (content.slice(0, 4) != 'http')
+      if content.present? && (content.slice(0, 4) != 'http')
         content = 'http://' + content
       end
 
