@@ -23,23 +23,32 @@ a link{color:green;}
 </style>
 
 <h2 class="h2">Link Share</h2> <span class="share"><%= link_to 'share', "/articles/new" %></span>
-<table class="list">
-<% i = 1 %>
-<% @articles.each do |art| %>
-<tr>
-    <td><a href="javascript:void(0);" onclick="review(<%= art.id %>);">▲</a><%= i %></td>
-    <td>
-      <%= link_to art.title, (art.content.present? ? art.content : article_path(art.id)), target: '_blank' %>
-    </td>
-    <td><%= art.created_at.strftime('%Y-%m-%d %H:%M') %></td>
-    <td style="color:#000;">review:<span id="click_num_<%= art.id %>"><%= art.click_num.to_i %></span></td>
-    <td><a href="/articles/comments/<%= art.id %>"><%= art.comments_count %> comments</a></td>
-    <td><!--<%= link_to '查看', "articles/#{art.id}" %> -->
-    <%= link_to 'edit', edit_article_path(art) %>
-    <%= link_to 'delete', "/articles/delete/#{art.id}" %></td>
-</tr>
-<% i = i + 1 %>
+<div style="margin-top:10px;">
+  <form action="/articles" method="GET">
+    <input type="text" name="keyword" value="<%= params[:keyword] || '' %>"/>
+    <input type="submit" value="搜索"/>
+  </form>
+</div>
+<% if @articles.size > 0 %>
+    <table class="list">
+    <% i = 1 %>
+    <% @articles.each do |art| %>
+    <tr>
+        <td><a href="javascript:void(0);" onclick="review(<%= art.id %>);">▲</a><%= i %></td>
+        <td>
+          <%= link_to art.title, (art.content.present? ? art.content : article_path(art.id)), target: '_blank' %>
+        </td>
+        <td><%= art.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+        <td style="color:#000;">review:<span id="click_num_<%= art.id %>"><%= art.click_num.to_i %></span></td>
+        <td><a href="/articles/comments/<%= art.id %>"><%= art.comments_count %> comments</a></td>
+        <td><!--<%= link_to '查看', "articles/#{art.id}" %> -->
+        <%= link_to 'edit', edit_article_path(art) %>
+        <%= link_to 'delete', "/articles/delete/#{art.id}" %></td>
+    </tr>
+    <% i = i + 1 %>
+    <% end %>
+    </table>
+<% else %>
+    <div style="margin-top:30px;">没有匹配到任何数据...</div>
 <% end %>
-</table>
-
 <p><%= paginate @articles %></p>
