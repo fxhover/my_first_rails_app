@@ -28,7 +28,7 @@ class ArticlesController < ActionController::Base
     if request.post?
       @article = Article.find(params[:id])
       if @article.update_attributes({:title=>params[:title],:content=>params[:content], :description=>params[:description]})
-        redirect_to :action=> 'index'
+        redirect_to article_path(params[:id])
       else
         render action: "edit"
       end
@@ -38,7 +38,7 @@ class ArticlesController < ActionController::Base
   def delete
     @article = Article.find(params[:id])
     @article.destroy()
-    redirect_to  :action=> 'index'
+    redirect_to  request.env['HTTP_REFERER'] || root_path
   end
 
   def new
